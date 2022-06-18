@@ -1,0 +1,58 @@
+%YAML:1.0
+---
+#t_imu = t_cam + timeShift
+time_shift: 0.0063187281  #zed_imu
+#
+#time_shift: 0.019999469882748984 #oxts
+#time_shift: 0.0 #test
+cam_pose_path: ../data/2/left_pose.txt
+#cam_pose_path: ../data/2/TUMFrames.txt
+imu_data_path: ../data/2/zed_imu_raw.txt
+#imu_data_path: ../data/2/oxts_raw_repair.txt
+odo_data_path: ../data/2/ground_truth.txt
+
+cam_pose_path2: ../data/8/left_pose_time.txt
+#cam_pose_path2: ../data/8/ORB_VIO2.txt
+#cam_pose_path2: ../data/3/TUMFrames.txt
+imu_data_path2: ../data/8/zed_imu_raw.txt
+#imu_data_path2: ../data/8/oxts_raw.txt
+#imu_data_path2: ../data/7/oxts_raw.txt
+
+
+#zed imu parameters       The more accurate parameters you provide, the better performance
+#acc_n: 1.8194834447477038e-02          # accelerometer measurement noise standard deviation.
+#gyr_n: 1.4925486520763964e-03         # gyroscope measurement noise standard deviation.
+#acc_w: 3.7158205321992361e-04        # accelerometer bias random work noise standard deviation.
+#gyr_w: 3.4779053905652078e-06       # gyroscope bias random work noise standard deviation.
+#g_norm: 9.81007     # gravity magnitude
+
+#oxts imu parameters       The more accurate parameters you provide, the better performance
+#acc_n: 2.4252610821544076e-03          # accelerometer measurement noise standard deviation.
+#gyr_n: 4.5228219814993242e-04         # gyroscope measurement noise standard deviation.
+#acc_w: 1.2954010914310984e-04        # accelerometer bias random work noise standard deviation.
+#gyr_w: 1.3173717118705817e-05       # gyroscope bias random work noise standard deviation.
+#g_norm: 9.81007     # gravity magnitude
+
+#test
+acc_n: 0.1          # accelerometer measurement noise standard deviation.
+gyr_n: 0.01         # gyroscope measurement noise standard deviation.
+acc_w: 0.001        # accelerometer bias random work noise standard deviation.
+gyr_w: 0.0001       # gyroscope bias random work noise standard deviation.
+g_norm: 9.81007     # gravity magnitude
+
+#test
+acc_bias_x: 0.0          # accelerometer bias
+acc_bias_y: 0.0          # accelerometer
+acc_bias_z: 0.0          # accelerometer
+#acc_bias_x: -0.05          # accelerometer bias
+#acc_bias_y: -0.05          # accelerometer
+#acc_bias_z: -0.05          # accelerometer
+gyr_bias_x: 0.0         # gyroscope bias
+gyr_bias_y: 0.0         # gyroscope
+gyr_bias_z: 0.0        # gyroscope
+
+sliding_window: 200
+interval1: 1
+interval2: 11
+K1: 200
+K2: 200
