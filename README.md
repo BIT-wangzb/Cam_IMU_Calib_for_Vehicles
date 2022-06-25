@@ -5,7 +5,7 @@
 ### 1.1 **Ubuntu**
 在Ubuntu20.04上测试
 ### 1.2. **Ceres Solver**
-### 1.3. **Others**
+### 1.3. **其他**
 OpenCV 3.4 , Eigen3
 
 ## 2. 编译

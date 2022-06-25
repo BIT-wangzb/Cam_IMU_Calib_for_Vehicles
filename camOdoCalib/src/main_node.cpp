@@ -45,7 +45,7 @@ void calc_process2(Eigen::Matrix3d &Rci)
     std::cout << "============ calibrating pcb... ===============" << std::endl;
     data_selection ds2;
     std::vector<data_selection::sync_data> sync_result2;
-    //3.数据同步处理
+    //数据同步处理
     ds2.selectData(imuDatas2,camDatas2,sync_result2);//将筛选好对的数据存放在odoDatas\camDatas\sync_result，下标一一对应
 
     cSolver cSolver;
@@ -54,12 +54,11 @@ void calc_process2(Eigen::Matrix3d &Rci)
     std::vector<std::vector<data_selection::sync_data> > tmp_calib_data;
     tmp_calib_data.push_back(sync_result2);
     Eigen::Vector3d gc;
-    //非滑窗
-    cSolver.solveOtherResult_test2(tmp_calib_data,Rci,gc);
+    //
+    cSolver.solvePcb(tmp_calib_data,Rci,gc);
     cout<<"gc: "<<gc.transpose()<<endl;
     cout<<"gc norm: "<<gc.norm()<<endl;
-    cSolver.RefineResult(tmp_calib_data,Rci,gc);
-    cSolver.RefineResult_test3(tmp_calib_data,Rci,gc);
+    cSolver.RefinePcb(tmp_calib_data,Rci,gc);
     return;
 }
 
@@ -75,7 +74,7 @@ void calc_process(Eigen::Matrix3d &Rci)
     ds.selectData(imuDatas,camDatas,sync_result);//将筛选好对的数据存放在odoDatas\camDatas\sync_result，下标一一对应
 
     Eigen::Matrix3d Ryx,Ryx_imu;
-    cSolveQyx.estimateRyx(sync_result,Ryx);
+    cSolveQyx.estimateRyx_cam(sync_result,Ryx);
     cout<<"cam Ryx:\n"<<Ryx<<endl;
     cSolveQyx.estimateRyx_imu(sync_result,Ryx_imu);
     cout<<"imu Ryx:\n"<<Ryx_imu<<endl;
@@ -85,7 +84,7 @@ void calc_process(Eigen::Matrix3d &Rci)
     tmp_calib_data.push_back(sync_result);
     Rci.setIdentity();
     //gc,yaw
-    cSolver.solveOtherResult(tmp_calib_data,Ryx,Ryx_imu,Rci);
+    cSolver.solveRcb(tmp_calib_data,Ryx,Ryx_imu,Rci);
     return;
 }
 
@@ -431,22 +430,23 @@ int main(int argc, char **argv)
     fsSettings["imu_data_path"] >> imu_data_path;
     fsSettings["odo_data_path"] >> odo_data_path;
 
-    //1,读取cam pose数据
+    //1.1,读取平面camera pose数据
     bool success = readCamPose(cam_pose_path, timeShift);
     if (!success)
         return 0;
-    //2,读取IMU数据
+    //1.2,读取IMU数据
     success = readIMUData(imu_data_path);
     if (!success)
         return 0;
-
-    success = readOdomData(odo_data_path);
+    
     if (!success)
         return 0;
-    //3，开始计算
+    //1.3，开始计算RCB
     Eigen::Matrix3d Rci;
     calc_process(Rci);
+    cout<<"Ric result: "<<Rci.inverse().eulerAngles(2,1,0).transpose()*RAD2DEG<<endl;
 
+    //2.1,读取平面camera pose数据
     string cam_pose_path2, imu_data_path2;
     fsSettings["cam_pose_path2"] >> cam_pose_path2;
     fsSettings["imu_data_path2"] >> imu_data_path2;
@@ -458,7 +458,7 @@ int main(int argc, char **argv)
     if (!success)
         return 0;
 
-    cout<<"Ric result: "<<Rci.inverse().eulerAngles(2,1,0).transpose()*RAD2DEG<<endl;
+    //2.2 计算PCB
     calc_process2(Rci);
     return 0;
 }

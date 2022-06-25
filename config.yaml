@@ -1,7 +1,7 @@
 %YAML:1.0
 ---
 #t_imu = t_cam + timeShift
-time_shift: 0.0063187281  #zed_imu
+time_shift: 0.00529  #zed_imu
 #
 #time_shift: 0.019999469882748984 #oxts
 #time_shift: 0.0 #test

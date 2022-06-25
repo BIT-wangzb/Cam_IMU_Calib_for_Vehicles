@@ -14,17 +14,9 @@
 
 #include <opencv2/opencv.hpp>
 
-//#include "integration_base.h"
-
 class data_selection
 {
 public:
-    struct odo_data
-    {
-        double time;
-        double v_left;
-        double v_right;
-    };
     struct odo_data_test
     {
         double time;
@@ -87,23 +79,10 @@ public:
     double sum_dt;
     Eigen::Matrix<double,15,15> jacobian_;
 
-    // Left and right wheel velocities
-    double velocity_left;
-    double velocity_right;
-    // double velocity;
-    //camera data : x y yaw , x  y from tlc (not tcl)
     Eigen::Vector3d cam_t12;
-    double scan_match_results[3];// correct lx ly by R_x
-    // Estimated rototranslation based on odometry params.
-    double o[3];
-    // Estimated disagreement  sm - est_sm
-    double est_sm[3];
-    double err_sm[3]; //  s  - (-) l (+) o (+) l
-    // Other way to estimate disagreement:   l (+) s  - o (+) l
-    double err[3];
-    int mark_as_outlier;
-    //tcl_cam and qcl_cam are original data(not correted by R_x)
-    Eigen::Vector3d t21_cam;//06/06
+    double scan_match_results[3];
+
+    Eigen::Vector3d t21_cam;
     Eigen::Quaterniond q21_cam;
     Eigen::Quaterniond q12_cam;
     Eigen::Matrix3d Rwc1_cam;
