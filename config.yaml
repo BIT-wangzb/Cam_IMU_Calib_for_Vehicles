@@ -9,7 +9,6 @@ time_shift: 0.00529  #zed_imu
 cam_pose_path: ../data/2/left_pose.txt
 imu_data_path: ../data/2/zed_imu_raw.txt
 #imu_data_path: ../data/2/oxts_raw.txt
-odo_data_path: ../data/2/ground_truth.txt
 
 cam_pose_path2: ../data/5/left_pose_time.txt
 imu_data_path2: ../data/5/zed_imu_raw.txt
@@ -48,8 +47,8 @@ gyr_bias_x: 0.0         # gyroscope bias
 gyr_bias_y: 0.0         # gyroscope
 gyr_bias_z: 0.0        # gyroscope
 
-sliding_window: 200
+sliding_window: 200 #for test
 interval1: 1
-interval2: 11
+interval2: 1
 K1: 200
 K2: 200
