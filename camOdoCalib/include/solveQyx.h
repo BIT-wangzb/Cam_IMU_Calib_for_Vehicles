@@ -4,24 +4,6 @@
 #include "solver.h"
 #include <ceres/ceres.h>
 
-template<typename T>
-Eigen::Matrix< T,4,4 > QuaternionMultMatLeft(const Eigen::Quaternion< T >& q )
-{
-    return (Eigen::Matrix< T, 4,4>() << q.w(), -q.z(), q.y(), q.x(),
-                                                                          q.z(), q.w(), -q.x(), q.y(),
-                                                                          -q.y(), q.x(), q.w(), q.z(),
-                                                                          -q.x(), -q.y(), -q.z(), q.w()).finished();
-}
-
-template< typename T>
-Eigen::Matrix< T ,4,4 > QuaternionMultMatRight(const Eigen::Quaternion< T >& q )
-{
-  return (Eigen::Matrix<T ,4,4>() <<q.w(), q.z(), -q.y(), q.x(),
-                                                                      -q.z(), q.w(), q.x(), q.y(),
-                                                                      q.y(), -q.x(), q.w(), q.z(),
-                                                                      -q.x(), -q.y(), -q.z(), q.w()).finished();
-
-}
 
 /*
  *  Rotation matrix to euler
