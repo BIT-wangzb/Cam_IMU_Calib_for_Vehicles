@@ -1,3 +1,0 @@
-<launch>
-    <node name="cam_odo_cal" pkg="cam_odo_cal" type="cam_odo_cal" output="screen" args ="$(find cam_odo_cal)/config.yaml"/>
-</launch>
