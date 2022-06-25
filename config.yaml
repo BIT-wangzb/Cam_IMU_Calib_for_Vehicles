@@ -1,22 +1,19 @@
 %YAML:1.0
 ---
+SAVE_PATH: /home/wangzb/Documents/
 #t_imu = t_cam + timeShift
 time_shift: 0.00529  #zed_imu
 #
 #time_shift: 0.019999469882748984 #oxts
 #time_shift: 0.0 #test
 cam_pose_path: ../data/2/left_pose.txt
-#cam_pose_path: ../data/2/TUMFrames.txt
 imu_data_path: ../data/2/zed_imu_raw.txt
-#imu_data_path: ../data/2/oxts_raw_repair.txt
+#imu_data_path: ../data/2/oxts_raw.txt
 odo_data_path: ../data/2/ground_truth.txt
 
-cam_pose_path2: ../data/8/left_pose_time.txt
-#cam_pose_path2: ../data/8/ORB_VIO2.txt
-#cam_pose_path2: ../data/3/TUMFrames.txt
-imu_data_path2: ../data/8/zed_imu_raw.txt
-#imu_data_path2: ../data/8/oxts_raw.txt
-#imu_data_path2: ../data/7/oxts_raw.txt
+cam_pose_path2: ../data/5/left_pose_time.txt
+imu_data_path2: ../data/5/zed_imu_raw.txt
+#imu_data_path2: ../data/5/oxts_raw.txt
 
 
 #zed imu parameters       The more accurate parameters you provide, the better performance
