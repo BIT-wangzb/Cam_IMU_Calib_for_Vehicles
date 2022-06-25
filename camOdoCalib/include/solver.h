@@ -90,6 +90,7 @@ public:
 public:
     int K1,K2;
     int ws;//window size
+    string PATH;
 
 };
 

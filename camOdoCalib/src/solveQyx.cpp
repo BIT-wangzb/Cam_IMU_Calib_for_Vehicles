@@ -42,7 +42,7 @@ bool SolveQyx::estimateRyx_cam(std::vector<data_selection::sync_data> sync_resul
     }
     //M.conservativeResize((id-1)*4,4);
     //TODO:: M^T * M
-    //2.对Ａ矩阵进行ｓｖｄ分解
+    //2.对A矩阵进行SVD分解
     Eigen::JacobiSVD<Eigen::MatrixXd> svd(M, Eigen::ComputeFullU |Eigen::ComputeFullV);
 
     //3.find two optimal solutions(最小奇异值对应的列向量)
@@ -97,19 +97,7 @@ bool SolveQyx::estimateRyx_cam(std::vector<data_selection::sync_data> sync_resul
     return true;
 }
 bool SolveQyx::estimateRyx_imu(std::vector<data_selection::sync_data> sync_result, Eigen::Matrix3d &Ryx)
-{
-//    Eigen::Matrix3d Rci_test;
-//    Rci_test << 0.003160590246273326, -0.9999791454805219, -0.005631986624785923,
-//            -0.002336363271321251, 0.0056246151765369234, -0.9999814523833838,
-//            0.9999922760081504, 0.0031736899915518757, -0.0023185374437218464;
-
-//    Eigen::Matrix3d Ric_test = Rci_test.inverse();
-    Eigen::Matrix3d Ric_test;
-//    R = Eigen::AngleAxisd(95*DEG2RAD,Eigen::Vector3d::UnitZ()) *
-//        Eigen::AngleAxisd(180*DEG2RAD,Eigen::Vector3d::UnitY()) *
-//        Eigen::AngleAxisd(95*DEG2RAD,Eigen::Vector3d::UnitX());
-    Ric_test.setIdentity();
-
+{   
     size_t motionCnt = sync_result.size( );
     Eigen::MatrixXd M(motionCnt*4, 4);
     M.setZero();
@@ -117,7 +105,7 @@ bool SolveQyx::estimateRyx_imu(std::vector<data_selection::sync_data> sync_resul
     for(size_t i = 0; i < sync_result.size(); ++i)
     {
         double t12_length = sync_result[i].cam_t12.norm();
-        if(t12_length < 1e-4)//相机移动距离不小于１微米
+        if(t12_length < 1e-4)//相机移动距离大于阈值
             continue;
         if(sync_result[i].axis_imu(2) > -0.96)//此处依然是相机，最好只绕y轴旋转，即要接近于-1，axis(1)是相机y轴，且均为负数
             continue;

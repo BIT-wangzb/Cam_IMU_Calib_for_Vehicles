@@ -1,7 +1,6 @@
 ﻿#include <iostream>
 #include "solver.h"
 #include "solveQyx.h"
-//#include "utils.h"
 #include <eigen3/Eigen/Dense>
 #include <eigen3/Eigen/Eigenvalues>
 #include <Eigen/SVD>
@@ -19,7 +18,8 @@ cSolver::cSolver()
     ws = fs["sliding_window"];
     K1 = fs["K1"];
     K2 = fs["K2"];
-    cout<<"ws: "<<ws<<endl;
+    PATH = fs["SAVE_PATH"]
+    // cout<<"ws: "<<ws<<endl;
     fs.release();
 }
 
@@ -29,13 +29,10 @@ void cSolver::solveGyroscopeBias(std::vector<data_selection::sync_data> &calib_d
 {
     //选择连续数据，并且符合条件
     static ofstream f_bias;
-    f_bias.open("/home/wangzb/Documents/01_Learning/02_Paper/03_cam-IMU/CamOdomCalibraTool/bias.txt");
+    f_bias.open(PATH + "bias.txt");
     f_bias<<std::fixed<<std::setprecision(6);
     f_bias <<"bias\n";
-//    Eigen::Matrix3d Rcb;
-//    Rcb << 0.003160590246273326, -0.9999791454805219, -0.005631986624785923,
-//            -0.002336363271321251, 0.0056246151765369234, -0.9999814523833838,
-//            0.9999922760081504, 0.0031736899915518757, -0.0023185374437218464;
+
     int frame_count = 15;
     int data_size = 0;
     while (true)
@@ -106,9 +103,6 @@ void cSolver::solveGyroscopeBias(std::vector<data_selection::sync_data> &calib_d
             calib_data[i].Bg = delta_bg;
 
     }
-
-//    return;
-    //开始求解bias
 
     f_bias.close();
     return;
@@ -196,11 +190,8 @@ void cSolver::solvePcb(std::vector<std::vector<data_selection::sync_data> > &cal
                                Eigen::Vector3d &gc)
 {
     static ofstream f_pcb;
-    f_pcb.open("/home/wangzb/Documents/01_Learning/02_Paper/03_cam-IMU/CamOdomCalibraTool/tcb_estimation.txt");
+    f_pcb.open(PATH + "Pcb_estimation.txt");
     f_pcb<<std::fixed<<std::setprecision(6);
-    f_pcb <<"solveOtherResult_test2 非滑窗\n";
-    f_pcb<<"solveOtherResult_test2 zed_tci = [0.0224, -0.0112, -0.0165]\n";
-    f_pcb<<"solveOtherResult_test2 oxts_tci = [-0.081, 1.03, -1.45]\n";
     f_pcb <<"gcx, gcy, gcz, pcb_x, pcb_y, pcb_z\n";
 
     bool first_solve = true;
@@ -316,10 +307,10 @@ void cSolver::solvePcb(std::vector<std::vector<data_selection::sync_data> > &cal
 
     size_t res_num = x1.size();
     int n = 10;
-    double condition1 = 0.005;
-    double condition2 = 0.05;
+    double condition1 = 0.03;
+    double condition2 = 0.03;
     static ofstream f_dev1;
-    f_dev1.open("/home/wangzb/Documents/01_Learning/02_Paper/03_cam-IMU/CamOdomCalibraTool/tcb_estimation_dev.txt");
+    f_dev1.open(PATH + "pcb_estimation_dev.txt");
     f_dev1<<std::fixed<<std::setprecision(6);
     double x_min = std::numeric_limits<double>::max();
     double x1_min = std::numeric_limits<double>::max();
@@ -392,9 +383,6 @@ void cSolver::solvePcb(std::vector<std::vector<data_selection::sync_data> > &cal
         }
 
     }
-    f_dev1 <<"best result: "<<best_res[0]<<" "<<best_res[1]<<" "
-            <<best_res[2]<<" "<<best_res[3]<<" "
-            <<best_res[4]<<" "<<best_res[5]<<endl;
     f_dev1<<"min: "<<x1_min<<" "<<x2_min<<" "<<x3_min<<" "<<x4_min<<" "<<x5_min<<" "<<x6_min<<endl;
     f_dev1<<"max: "<<x1_max<<" "<<x2_max<<" "<<x3_max<<" "<<x4_max<<" "<<x5_max<<" "<<x6_max<<endl;
     f_dev1.close();
@@ -407,9 +395,9 @@ void cSolver::solvePcb_test2(std::vector<std::vector<data_selection::sync_data> 
                                Eigen::Matrix3d Ryx_imu,Eigen::Matrix3d &Rci)
 {
     static ofstream f_gamma4;
-    f_gamma4.open("/home/wangzb/Documents/01_Learning/02_Paper/03_cam-IMU/CamOdomCalibraTool/pcb.txt");
+    f_gamma4.open(PATH + "pcb.txt");
     f_gamma4<<std::fixed<<std::setprecision(6);
-    f_gamma4 <<"solveOtherResult1\n";
+    f_gamma4 <<"solvePcb_test2\n";
 
     bool first_solve = true;
     Eigen::Vector3d gc_init = Eigen::Vector3d::Zero();
@@ -560,7 +548,7 @@ void cSolver::solvePcb_test2(std::vector<std::vector<data_selection::sync_data> 
     double condition1 = 0.006;
     double condition2 = 0.2;
     static ofstream f_dev2;
-    f_dev2.open("/home/wangzb/Documents/01_Learning/02_Paper/03_cam-IMU/CamOdomCalibraTool/stdDevPcb.txt");
+    f_dev2.open(PATH + "stdDevPcb.txt");
     f_dev2<<std::fixed<<std::setprecision(6);
     double x_min = std::numeric_limits<double>::max();
     double x1_min = std::numeric_limits<double>::max();
@@ -632,10 +620,9 @@ void cSolver::solvePcb_test3(std::vector<std::vector<data_selection::sync_data> 
                                      Eigen::Vector3d &gc)
 {
     static ofstream f_pcb;
-    f_pcb.open("/home/wangzb/Documents/01_Learning/02_Paper/03_cam-IMU/CamOdomCalibraTool/tcb_estimation.txt");
+    f_pcb.open(PATH + "pcb_estimation.txt");
     f_pcb<<std::fixed<<std::setprecision(6);
-    f_pcb<<"solveOtherResult_test3 zed_tci = [0.0224, -0.0112, -0.0165]\n";
-    f_pcb<<"solveOtherResult_test3 oxts_tci = [-0.081, 1.03, -1.45]\n";
+    f_pcb<<"solvePcb_test3\n";   
     f_pcb <<"gcx, gcy, gcz, pcb_x, pcb_y, pcb_z\n";
 
     bool first_solve = true;
@@ -756,7 +743,7 @@ void cSolver::solvePcb_test3(std::vector<std::vector<data_selection::sync_data> 
     double condition1 = 0.005;
     double condition2 = 0.005;
     static ofstream f_dev1;
-    f_dev1.open("/home/wangzb/Documents/01_Learning/02_Paper/03_cam-IMU/CamOdomCalibraTool/tcb_StaDev.txt");
+    f_dev1.open(PATH + "Pcb_StaDev.txt");
     f_dev1<<std::fixed<<std::setprecision(6);
     double x_min = std::numeric_limits<double>::max();
     double x1_min = std::numeric_limits<double>::max();
@@ -829,9 +816,7 @@ void cSolver::solvePcb_test3(std::vector<std::vector<data_selection::sync_data> 
         }
 
     }
-    f_dev1 <<"best result: "<<best_res[0]<<" "<<best_res[1]<<" "
-           <<best_res[2]<<" "<<best_res[3]<<" "
-           <<best_res[4]<<" "<<best_res[5]<<endl;
+    
     f_dev1<<"min: "<<x1_min<<" "<<x2_min<<" "<<x3_min<<" "<<x4_min<<" "<<x5_min<<" "<<x6_min<<endl;
     f_dev1<<"max: "<<x1_max<<" "<<x2_max<<" "<<x3_max<<" "<<x4_max<<" "<<x5_max<<" "<<x6_max<<endl;
     f_dev1.close();
@@ -852,11 +837,9 @@ void cSolver::RefinePcb_test3(std::vector<std::vector<data_selection::sync_data>
     bool first_solve = true;
 
     static ofstream f_pcb3;
-    f_pcb3.open("/home/wangzb/Documents/01_Learning/02_Paper/03_cam-IMU/CamOdomCalibraTool/refine_tcb_test3.txt");
+    f_pcb3.open(PATH + "refine_tcb_test3.txt");
     f_pcb3<<std::fixed<<std::setprecision(6);
-    f_pcb3<<"非滑窗\n";
-    f_pcb3<<"RefineResult_test1 zed_tci = [0.0224, -0.0112, -0.0165]\n";
-    f_pcb3<<"RefineResult_test1 oxts_tci = [-0.081, 1.03, -1.45]\n";
+    f_pcb3<<"RefinePcb_test3\n";   
     f_pcb3<<"# theta_x theta_y bias_x bias_y bias_z pcb_x pcb_y pcb_z\n";
 
     Eigen::Vector3d GI = Eigen::Vector3d::Zero();
@@ -947,9 +930,8 @@ void cSolver::RefinePcb_test3(std::vector<std::vector<data_selection::sync_data>
             Eigen::VectorXd x;
             x = A.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(b);
 //            x = A_.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(b_);
-//            theta_xy_last = x.head(2);
-            theta_xy_last(0) = x(0);
-            theta_xy_last(1) = x(1);
+            theta_xy_last = x.head(2);
+            
             theta_xy_last(2) = 0;
             bias_last = x.block<3,1>(2,0);
             pcb_last = x.tail(3);
@@ -965,11 +947,6 @@ void cSolver::RefinePcb_test3(std::vector<std::vector<data_selection::sync_data>
             if (first_solve)
                 first_solve = false;
         }
-
-
-
-        //计算误差
-
     }
     f_pcb3.close();
 
@@ -990,10 +967,10 @@ void cSolver::RefinePcb(std::vector<std::vector<data_selection::sync_data>> &cal
     double time0 = 0.0;
 
     static ofstream f_pcb3;
-    f_pcb3.open("/home/wangzb/Documents/01_Learning/02_Paper/03_cam-IMU/CamOdomCalibraTool/refine_tcb.txt");
+    f_pcb3.open(PATH + "refine_tcb.txt");
     f_pcb3<<std::fixed<<std::setprecision(6);
-    f_pcb3<<"非滑窗 RefineResult zed_tci = [0.0224, -0.0112, -0.0165]\n";
-    f_pcb3<<"RefineResult oxts_tci = [-0.081, 1.03, -1.45]\n";
+   
+    f_pcb3<<"RefinePcb\n";
     f_pcb3<<"# theta_x theta_y pcb_x pcb_y pcb_z\n";
 
     Eigen::Vector3d GI = Eigen::Vector3d::Zero();
@@ -1141,10 +1118,10 @@ void cSolver::RefinePcb(std::vector<std::vector<data_selection::sync_data>> &cal
 
     size_t res_num = x1.size();
     int n = 10;
-    double condition1 = 0.005;
-    double condition2 = 0.05;
+    double condition1 = 0.03;
+    double condition2 = 0.03;
     static ofstream f_dev2;
-    f_dev2.open("/home/wangzb/Documents/01_Learning/02_Paper/03_cam-IMU/CamOdomCalibraTool/refine_tcb_dev.txt");
+    f_dev2.open(PATH + "refine_tcb_dev.txt");
     f_dev2<<std::fixed<<std::setprecision(6);
     double x_min = std::numeric_limits<double>::max();
     double x1_min = std::numeric_limits<double>::max();
@@ -1176,10 +1153,6 @@ void cSolver::RefinePcb(std::vector<std::vector<data_selection::sync_data>> &cal
         f_dev2 <<dev3<<" ";
         f_dev2 <<dev4<<" ";
         f_dev2 <<dev5<<endl;
-//        if (dev1 < condition1 && dev2 < condition1 && dev3 < condition2 &&
-//            dev4 < condition2 && dev5 < condition2)
-//            f_dev2<<"best result: "<<x1_[n-1]<<" "<<x2_[n-1]<<" "<<x3_[n-1]
-//                  <<" "<<x4_[n-1]<<" "<<x5_[n-1]<<" "<<endl;
         x1_min = dev1 < x1_min ? dev1 : x1_min;
         x2_min = dev2 < x2_min ? dev2 : x2_min;
         x3_min = dev3 < x3_min ? dev3 : x3_min;
@@ -1203,8 +1176,6 @@ void cSolver::RefinePcb(std::vector<std::vector<data_selection::sync_data>> &cal
         }
 
     }
-    f_dev2 <<"pcb best: "<<best_res[2]<<" "
-           <<best_res[3]<<" "<<best_res[4]<<endl;
     f_dev2<<"min: "<<x1_min<<" "<<x2_min<<" "<<x3_min<<" "<<x4_min<<" "<<x5_min<<endl;
     f_dev2<<"max: "<<x1_max<<" "<<x2_max<<" "<<x3_max<<" "<<x4_max<<" "<<x5_max<<endl;
     f_dev2.close();
@@ -1218,12 +1189,9 @@ void cSolver::solveRcb(std::vector<std::vector<data_selection::sync_data> > &cal
                                Eigen::Matrix3d Ryx_imu,Eigen::Matrix3d &Rci)
 {
     static ofstream f_gamma;
-    f_gamma.open("/home/wangzb/Documents/01_Learning/02_Paper/03_cam-IMU/CamOdomCalibraTool/Rcb_estimation.txt");
+    f_gamma.open(PATH + "Rcb_estimation.txt");
     f_gamma<<std::fixed<<std::setprecision(6);
-    f_gamma <<"SolveOtherResult\n";
-    static ofstream f_cam;
-    f_cam.open("/home/wangzb/Documents/01_Learning/02_Paper/03_cam-IMU/CamOdomCalibraTool/cam.txt");
-    f_cam<<std::fixed<<std::setprecision(6);
+    f_gamma <<"SolveRcb\n";
 
     bool first_solve = true;
     Eigen::Vector2d gc_init = Eigen::Vector2d::Zero();
@@ -1275,9 +1243,7 @@ void cSolver::solveRcb(std::vector<std::vector<data_selection::sync_data> > &cal
             Eigen::Vector3d v12_imu = calib_data[segmentId][motionId].V;
             Eigen::Vector3d t12_cam = calib_data[segmentId][motionId].cam_t12;
             Eigen::Vector3d t23_cam = calib_data[segmentId][motionId+1].cam_t12;
-            f_cam << t12_cam(0)<<" ";
-            f_cam << t12_cam(1)<<" ";
-            f_cam << t12_cam(2)<<endl;
+    
 
             Eigen::Matrix3d Rwc1_cam = calib_data[segmentId][motionId].Rwc1_cam;
             Eigen::Matrix3d Rwc2_cam = calib_data[segmentId][motionId].Rwc2_cam;
@@ -1422,15 +1388,15 @@ void cSolver::solveRcb(std::vector<std::vector<data_selection::sync_data> > &cal
         }
     }
     f_gamma.close();
-    f_cam.close();
+    
 
     //判断收敛
     size_t res_num = x1.size();
     int n = 10;
-    double condition1 = 0.005;
-    double condition2 = 0.1;
+    double condition1 = 0.03;
+    double condition2 = 0.03;
     static ofstream f_dev;
-    f_dev.open("/home/wangzb/Documents/01_Learning/02_Paper/03_cam-IMU/CamOdomCalibraTool/Rcb_estimation_dev.txt");
+    f_dev.open(PATH +"Rcb_estimation_dev.txt");
     f_dev<<std::fixed<<std::setprecision(6);
     double x_min = std::numeric_limits<double>::max();
     double x1_min = std::numeric_limits<double>::max();
@@ -1488,7 +1454,6 @@ void cSolver::solveRcb(std::vector<std::vector<data_selection::sync_data> > &cal
     }
     f_dev<<"min: "<<x1_min<<" "<<x2_min<<", "<<x3_min<<endl;
     f_dev<<"max: "<<x1_max<<" "<<x2_max<<" "<<x3_max<<endl;
-    f_dev<<"Ric best result: "<<best_res[0]<<" "<<best_res[1]<<" "<<best_res[2]<<endl;
     Eigen::Matrix3d Ric_best;
     Ric_best = Eigen::AngleAxisd(best_res[0]*DEG2RAD,Eigen::Vector3d::UnitZ()) *
                Eigen::AngleAxisd(best_res[1]*DEG2RAD,Eigen::Vector3d::UnitY()) *
@@ -1504,7 +1469,7 @@ void cSolver::solveOtherResult_gc(std::vector<std::vector<data_selection::sync_d
                                Eigen::Matrix3d Ryx_imu)
 {
     static ofstream f_gc;
-    f_gc.open("/home/wangzb/Documents/01_Learning/02_Paper/03_cam-IMU/CamOdomCalibraTool/gc.txt");
+    f_gc.open(PATH + "gc.txt");
     f_gc<<std::fixed<<std::setprecision(6);
     f_gc <<"gc\n";
     int segmentCount = calib_data.size();
@@ -1571,77 +1536,11 @@ void cSolver::solveOtherResult_gc(std::vector<std::vector<data_selection::sync_d
         f_gc << x(0)<<" ";
         f_gc << x(1)<<" ";
         f_gc << x(2)<<endl;
-//        A = A * 1000;
-//        b = b * 1000;
-//        Eigen::VectorXd x(6);
-//        x = A.ldlt().solve(b);
         std::cout<<"--------result--------\n";
         std::cout<<"x: "<<x.transpose()<<std::endl;
         f_gc.close();
 
     }
-}
-
-void cSolver::solveOtherResult_test(std::vector<data_selection::sync_data_test> &calib_data,
-                                    Eigen::Matrix3d Ryx_cam,
-                                    Eigen::Matrix3d Ryx_odo)
-{
-    Eigen::MatrixXd G(4,4);
-    Eigen::VectorXd w(4);
-    Eigen::Matrix3d Ryx_odo_inv = Ryx_odo.transpose();
-    double a11, a21, a22;
-    a11 = Ryx_odo_inv(0,0);
-    a21 = Ryx_odo_inv(1,0);
-    a22 = Ryx_odo_inv(1,1);
-    for (int i = 0; i < calib_data.size(); ++i)
-    {
-        double t12_length = calib_data[i].t12_odo.norm();
-        if(t12_length < 1e-4)//相机移动距离不小于１微米
-            continue;
-        if(calib_data[i].axis_odo(2) > -0.96)//最好只绕z轴旋转，即要接近于-1，axis(1)是相机y轴，且均为负数
-            continue;
-
-        Eigen::MatrixXd tmp_G(2,4);
-        Eigen::Quaterniond qcl_odo = calib_data[i].q21_odo;
-        Eigen::Matrix2d J;
-        J = Eigen::Matrix2d::Identity() -
-            qcl_odo.toRotationMatrix().block<2,2>(0,0);
-//        J = qcl_odo.toRotationMatrix().block<2,2>(0,0) -
-//            Eigen::Matrix2d::Identity();
-
-        tmp_G.block<2,2>(0,0) = J;
-        //
-        Eigen::Vector3d tvec_cam = calib_data[i].t21_cam;
-        Eigen::Vector3d n;
-        n = Ryx_cam.row(2);
-        Eigen::Vector3d pi = Ryx_cam * (tvec_cam - tvec_cam.dot(n)*n);
-
-        Eigen::Matrix2d K;
-        K << a11*pi(0), -a11*pi(1),
-                a21*pi(0)+a22*pi(1), a22*pi(0)-a21*pi(1);
-        tmp_G.block<2,2>(0, 2) = K;
-
-        G += tmp_G.transpose()*tmp_G;
-
-        Eigen::Vector3d t12_odo = calib_data[i].t12_odo;
-        Eigen::Vector2d tmp_b(t12_odo(0), t12_odo(1));
-
-        w += tmp_G.transpose() * tmp_b;
-    }
-    Eigen::VectorXd x(4);
-    x = G.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(w);
-    double alpha = atan2(x(3), x(2));
-    std::cout<<"alpha: "<<alpha * RAD2DEG <<std::endl;
-    std::cout<<"result: "<<x.transpose()<<std::endl;
-
-    Eigen::Matrix3d R_z;
-    R_z = Eigen::AngleAxisd(alpha,Eigen::Vector3d::UnitZ()) *
-                        Eigen::AngleAxisd(0,Eigen::Vector3d::UnitY()) *
-                    Eigen::AngleAxisd(0,Eigen::Vector3d::UnitX());
-    Eigen::Matrix3d Ric;
-    Ric = Ryx_odo_inv * R_z * Ryx_cam;
-    Eigen::Vector3d euler = Ric.eulerAngles(2,1,0);
-    std::cout<<"roll, pitch, yaw: "<<euler.transpose() * RAD2DEG <<std::endl;
 }
 
 //Tool
